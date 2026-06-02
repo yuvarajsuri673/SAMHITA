@@ -1,9 +1,7 @@
 import sys
 import os
 
-# Get absolute path of project root
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Append backend folder to python path
-sys.path.append(os.path.join(project_root, "backend"))
+# Add the 'api' directory to the path so python can find 'app' package
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from backend.main import app
+from app.main import app

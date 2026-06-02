@@ -193,3 +193,5 @@ local_db_posts.json
 local_db_sessions.json
 local_db_users.json
 *.json.bak
+
+.vercel
