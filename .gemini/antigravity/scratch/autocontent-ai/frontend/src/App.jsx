@@ -12,6 +12,7 @@ import { Loader } from 'lucide-react';
 export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Global Auto Mode State
   const [autoMode, setAutoMode] = useState({
@@ -170,12 +171,12 @@ export default function App() {
     <Router>
       <div className="flex h-screen overflow-hidden bg-dark-950 text-dark-100">
         {/* Left Navigation Sidebar */}
-        <Sidebar user={user} onLogout={() => setUser(null)} />
+        <Sidebar user={user} onLogout={() => setUser(null)} isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Global Header */}
-          <Navbar autoMode={autoMode} />
+          <Navbar autoMode={autoMode} onMenuClick={() => setSidebarOpen(true)} />
           
           {/* Scrollable Sub Pages */}
           <main className="flex-1 overflow-y-auto bg-dark-950/95">
