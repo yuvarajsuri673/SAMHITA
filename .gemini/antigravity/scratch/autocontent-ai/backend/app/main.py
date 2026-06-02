@@ -1,3 +1,8 @@
+import sys
+import os
+# Add parent directory of 'app' to python path for Vercel serverless resolution
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.connection import Database
