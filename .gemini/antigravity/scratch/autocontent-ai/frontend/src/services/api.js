@@ -85,4 +85,10 @@ export const api = {
     const response = await client.post('/agents/run', { sector, limit });
     return response.data;
   },
+
+  // Trigger Prompt-Based AI Agent workflow
+  runPromptPipeline: async (prompt) => {
+    const response = await client.post('/agents/prompt', { prompt });
+    return response.data;
+  },
 };

@@ -33,3 +33,27 @@ async def run_pipeline(request: Optional[RunPipelineRequest] = None):
             detail=f"Pipeline execution failed: {str(e)}"
         )
 
+
+class RunPromptRequest(BaseModel):
+    prompt: str
+
+@router.post("/prompt")
+async def run_prompt_pipeline(request: RunPromptRequest):
+    """
+    Triggers the prompt-based agent posting flow.
+    Parses the prompt, crawls optional web sources, generates platform-specific content, 
+    saves to database as draft, and returns intent + post data.
+    """
+    logger.info(f"Prompt agent pipeline trigger received: {request.prompt}")
+    try:
+        from app.agents.prompt_agent import PromptAgent
+        agent = PromptAgent()
+        result = await agent.run(request.prompt)
+        return result
+    except Exception as e:
+        logger.error(f"Error executing prompt pipeline: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Prompt execution failed: {str(e)}"
+        )
+

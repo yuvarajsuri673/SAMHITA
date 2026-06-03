@@ -15,7 +15,11 @@ import {
   Settings, 
   X, 
   AlertTriangle,
-  FileText
+  FileText,
+  Sparkles,
+  Send,
+  Share2,
+  Copy
 } from 'lucide-react';
 
 export default function Dashboard({
@@ -39,6 +43,59 @@ export default function Dashboard({
   const [modalInterval, setModalInterval] = useState(30); // default 30s for demo
   const [modalLimit, setModalLimit] = useState(2);
   const [modalSector, setModalSector] = useState('technology');
+
+  // AI Prompt Assistant States
+  const [promptText, setPromptText] = useState('');
+  const [promptRunning, setPromptRunning] = useState(false);
+  const [promptResult, setPromptResult] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [activeSharePlatform, setActiveSharePlatform] = useState('');
+
+  const handlePromptSubmit = async (e) => {
+    e.preventDefault();
+    if (!promptText.trim() || promptRunning) return;
+
+    setPromptRunning(true);
+    setPromptResult(null);
+
+    try {
+      const res = await api.runPromptPipeline(promptText);
+      if (res.status === 'success' || res.status === 'partial_success') {
+        setPromptResult(res);
+        setPromptText('');
+        fetchDashboardData();
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        alert("Agent returned an error: " + (res.message || "Unknown error"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to run prompt pipeline: " + (err.response?.data?.detail || err.message));
+    } finally {
+      setPromptRunning(false);
+    }
+  };
+
+  const handleShareClick = (platform, text) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setActiveSharePlatform(platform);
+        setShowShareModal(true);
+
+        if (platform === 'twitter') {
+          const encoded = encodeURIComponent(text);
+          window.open(`https://twitter.com/intent/tweet?text=${encoded}`, '_blank');
+        } else if (platform === 'linkedin') {
+          window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank');
+        } else if (platform === 'instagram') {
+          window.open('https://www.instagram.com', '_blank');
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to copy to clipboard:', err);
+        alert('Could not copy text automatically. Please copy the text manually.');
+      });
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -393,6 +450,99 @@ export default function Dashboard({
               </div>
             )}
           </div>
+
+          {/* AI Prompt Assistant Card */}
+          <div className="bg-dark-900 border border-dark-800 rounded-xl p-6 space-y-5 shadow-md relative overflow-hidden">
+            <div className="flex items-center justify-between border-b border-dark-800 pb-3">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <Sparkles className="h-4.5 w-4.5 text-primary-400" />
+                AI Social Assistant
+              </h3>
+            </div>
+
+            <form onSubmit={handlePromptSubmit} className="space-y-4">
+              <p className="text-xs text-dark-400 leading-relaxed">
+                Ask the agent to research a topic, write a post, and prepare sharing intents:
+              </p>
+              
+              <div className="relative">
+                <textarea
+                  value={promptText}
+                  onChange={(e) => setPromptText(e.target.value)}
+                  disabled={promptRunning}
+                  placeholder='e.g., "Hey write a post about memoryOS for LinkedIn with key points"'
+                  className="w-full h-24 bg-dark-950 border border-dark-800 hover:border-dark-750 focus:border-primary-500 text-xs text-white p-3 rounded-xl focus:outline-none transition-all disabled:opacity-50 resize-none placeholder:text-dark-600 font-medium"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={promptRunning || !promptText.trim()}
+                className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer ${
+                  promptRunning || !promptText.trim()
+                    ? 'bg-dark-800 text-dark-500 border border-dark-700 cursor-not-allowed'
+                    : 'bg-primary-600 hover:bg-primary-500 text-white hover:shadow-primary-600/10 hover:-translate-y-0.5'
+                }`}
+              >
+                {promptRunning ? (
+                  <>
+                    <Loader className="h-3.5 w-3.5 animate-spin" />
+                    Executing Agent...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-3.5 w-3.5" />
+                    Generate & Publish Draft
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Generated Preview Block */}
+            {promptResult && promptResult.post && (
+              <div className="pt-4 border-t border-dark-850 space-y-4 animate-fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-extrabold text-primary-400 tracking-wider">
+                    Target: {promptResult.intent?.platform || 'General'}
+                  </span>
+                  <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded">
+                    Draft Saved
+                  </span>
+                </div>
+                
+                <div className="bg-dark-950 border border-dark-850 rounded-xl p-3.5 space-y-2.5">
+                  <h4 className="text-xs font-bold text-white">{promptResult.post.title}</h4>
+                  <div className="text-[11px] text-dark-400 whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto pr-1">
+                    {promptResult.post.content}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[9px] uppercase font-bold text-dark-500 block">Quick Share Intent</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => handleShareClick('linkedin', promptResult.post.content)}
+                      className="py-2 px-1 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 text-blue-400 hover:text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    >
+                      LinkedIn
+                    </button>
+                    <button
+                      onClick={() => handleShareClick('twitter', promptResult.post.content)}
+                      className="py-2 px-1 bg-sky-600/10 hover:bg-sky-600/20 border border-sky-500/20 text-sky-400 hover:text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    >
+                      Twitter/X
+                    </button>
+                    <button
+                      onClick={() => handleShareClick('instagram', promptResult.post.content)}
+                      className="py-2 px-1 bg-pink-600/10 hover:bg-pink-600/20 border border-pink-500/20 text-pink-400 hover:text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    >
+                      Instagram
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
       </div>
@@ -541,6 +691,52 @@ export default function Dashboard({
                 Start Auto Mode
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Instructions Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-sm bg-dark-900 border border-dark-800 rounded-2xl shadow-2xl p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-dark-800 pb-3">
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider capitalize flex items-center gap-2">
+                <Share2 className="h-4 w-4 text-primary-400" />
+                Share on {activeSharePlatform}
+              </h4>
+              <button 
+                onClick={() => setShowShareModal(false)}
+                className="p-1.5 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-4.5 w-4.5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4 text-center">
+              <div className="h-12 w-12 rounded-full bg-primary-500/10 text-primary-400 flex items-center justify-center mx-auto text-xl font-bold select-none">
+                ✓
+              </div>
+              <p className="text-xs text-dark-300 leading-relaxed">
+                Post content has been successfully copied to your clipboard!
+              </p>
+              
+              <div className="p-3.5 bg-dark-950/60 rounded-xl border border-dark-850 text-left space-y-1.5">
+                <span className="text-[10px] uppercase font-extrabold text-primary-400 block tracking-wider">Next Steps:</span>
+                <ol className="text-[11px] text-dark-400 list-decimal list-inside space-y-1">
+                  <li>We've opened {activeSharePlatform} in a new tab.</li>
+                  <li>Click on the post creation box.</li>
+                  <li>Press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong> on Mac) to paste the text.</li>
+                  <li>Review the formatting and click <strong>Post</strong>!</li>
+                </ol>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowShareModal(false)}
+              className="w-full py-2.5 bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer animate-pulse"
+            >
+              Got it!
+            </button>
           </div>
         </div>
       )}
