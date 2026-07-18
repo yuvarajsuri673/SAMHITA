@@ -512,25 +512,33 @@ Do not add explanations.
                     "Lord Krishna is a major deity in Hinduism, worshipped as the eighth avatar of Vishnu and as a supreme god in his own right. "
                     "He is the central character of the Mahabharata, the Bhagavata Purana, and the Bhagavad Gita. "
                     "Krishna is widely celebrated for his teachings on Dharma (righteousness), bhakti (devotion), and karma. "
-                    "He is depicted as a divine guide, strategic leader, and the universal Supreme Being."
+                    "His life stories depict him in diverse roles such as a divine guide, a playful child, and a master diplomat. "
+                    "His philosophical discourse to Arjuna on the battlefield of Kurukshetra is encapsulated in the holy Bhagavad Gita. "
+                    "Centuries later, his spiritual guidance and legacy remain a cornerstone of universal love and strategic wisdom."
                 ),
                 "virat kohli": (
                     "Virat Kohli is an Indian international cricketer and the former captain of the India national cricket team. "
                     "Widely regarded as one of the greatest batsmen in the history of the sport, he plays for RCB in the IPL and Delhi in domestic cricket. "
-                    "Kohli holds numerous records, including the most centuries in ODI cricket and the highest run-scorer in T20 World Cups. "
-                    "He was awarded the Padma Shri in 2017 and the Major Dhyan Chand Khel Ratna in 2018."
+                    "Kohli holds numerous global records, including the most centuries in ODI cricket and the highest run-scorer in T20 World Cups. "
+                    "He was awarded the Padma Shri in 2017 and the Major Dhyan Chand Khel Ratna in 2018 for his sports contributions. "
+                    "His career is defined by intense competitiveness, passion on the field, and a relentless focus on physical fitness. "
+                    "His transition into senior leadership has inspired a culture of fitness and dominance across Indian cricket."
                 ),
                 "rohit sharma": (
                     "Rohit Gurunath Sharma is an Indian international cricketer who currently captains the India national cricket team in Test and ODI matches. "
                     "He is a right-handed opening batsman and plays for Mumbai Indians in the IPL. "
-                    "Rohit is known for his leadership, timing, and elegance, holding the record for the highest individual score in an ODI match (264). "
-                    "He led India to the T20 World Cup victory in 2024 as captain."
+                    "Rohit is known for his leadership, timing, and elegance, holding the record for the highest individual score in an ODI match of 264 runs. "
+                    "He led India to a historic T20 World Cup victory in 2024 as captain before retiring from the format. "
+                    "His captaincy style blends calm composure under pressure with encouraging junior players to express themselves. "
+                    "His longevity and run-scoring capabilities have cemented his status as one of modern cricket's legendary players."
                 ),
                 "hardik pandya": (
                     "Hardik Himanshu Pandya is an Indian international cricketer who is the current vice-captain of the Indian cricket team in limited-overs formats. "
                     "An all-rounder who bats right-handed and bowls right-arm fast-medium, he has played in all three formats for India. "
                     "Hardik captained Gujarat Titans to their maiden IPL title in 2022 and currently plays for Mumbai Indians. "
-                    "He is known for his aggressive finishing and high-impact performances under pressure."
+                    "He is known for his aggressive finishing, tactical flexibility, and high-impact performances in crucial matches. "
+                    "Having overcome career-threatening back injuries and intense public scrutiny, his resilience is a defining trait of his journey. "
+                    "His ability to deliver under pressure makes him a key asset for India's strategic balance in international cricket."
                 )
             }
             
@@ -554,13 +562,17 @@ Do not add explanations.
                         f"{topic.title()} is a subject of significant interest and study. "
                         f"It represents key themes, history, and impact within its domain. "
                         f"Analysts and historians study {topic.title()} to understand its contribution to modern culture and society. "
-                        f"Recent developments continue to highlight the ongoing relevance and evolution of {topic.title()}."
+                        f"Recent developments continue to highlight the ongoing relevance and evolution of {topic.title()}. "
+                        f"Its legacy continues to influence contemporary perspectives and theoretical research. "
+                        f"Future trends indicate that discussion surrounding this subject will remain highly active and dynamic."
                     )
                     sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
             
             p_intro = ""
-            p_two_things = ""
+            p_details = ""
+            p_legacy = ""
             
+            # Paragraph 1
             if len(sentences) > 0:
                 p_intro = sentences[0]
                 if len(sentences) > 1:
@@ -568,20 +580,21 @@ Do not add explanations.
             else:
                 p_intro = f"{topic.title()} is a subject of significant interest and value, representing key historical, cultural, and professional themes."
 
-            # Construct Paragraph 2 with two major achievements/details
-            thing1 = ""
-            thing2 = ""
+            # Paragraph 2
             if len(sentences) > 2:
-                thing1 = f"First, {sentences[2].lower() if sentences[2].lower().startswith(('he ', 'she ', 'it ', 'the ', 'krishna ', 'virat ', 'rohit ', 'hardik ') ) else sentences[2]}"
+                p_details = sentences[2]
+                if len(sentences) > 3:
+                    p_details += f" {sentences[3]}"
             else:
-                thing1 = f"First, it has a notable impact on the development of its industry or culture."
-                
-            if len(sentences) > 3:
-                thing2 = f"Second, {sentences[3].lower() if sentences[3].lower().startswith(('he ', 'she ', 'it ', 'the ', 'krishna ', 'virat ', 'rohit ', 'hardik ') ) else sentences[3]}"
-            else:
-                thing2 = f"Second, its legacy continues to shape contemporary perspectives and modern advancements."
+                p_details = f"This topic has a notable impact on the development of its industry or culture, driving interest among practitioners and researchers globally."
 
-            p_two_things = f"Two key aspects define this topic. {thing1} {thing2}"
+            # Paragraph 3
+            if len(sentences) > 4:
+                p_legacy = sentences[4]
+                if len(sentences) > 5:
+                    p_legacy += f" {sentences[5]}"
+            else:
+                p_legacy = f"Its long-term influence continues to shape contemporary perspectives, guiding future research and modern advancements in this area."
             
             title_text = f"Quick Digest: {topic.title()}"
             summary_text = f"A concise fact sheet and key milestones for {topic.title()}."
@@ -591,19 +604,22 @@ Do not add explanations.
             
             linkedin_text = (
                 f"{p_intro}\n\n"
-                f"{p_two_things}"
+                f"{p_details}\n\n"
+                f"{p_legacy}"
             )
             twitter_text = (
                 f"{p_intro[:140]}...\n\n"
-                f"{p_two_things[:100]}..."
+                f"{p_details[:100]}..."
             )
             instagram_text = (
                 f"{p_intro}\n\n"
-                f"{p_two_things}"
+                f"{p_details}\n\n"
+                f"{p_legacy}"
             )
             general_text = (
                 f"{p_intro}\n\n"
-                f"{p_two_things}"
+                f"{p_details}\n\n"
+                f"{p_legacy}"
             )
             
         return {
