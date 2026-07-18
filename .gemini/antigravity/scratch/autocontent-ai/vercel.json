@@ -11,7 +11,7 @@
       "destination": "/assets/:path*"
     },
     {
-      "source": "/((?!api|assets|favicon.svg|icons.svg).*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
