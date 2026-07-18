@@ -515,94 +515,55 @@ Do not add explanations.
             # Simple sentence splitting and cleaning
             sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
             
-            bio_keywords = ["born", "cricketer", "player", "actor", "singer", "artist", "captain", "team", "league", 
-                            "matches", "cricket", "sports", "film", "movie", "star", "politician", "minister", 
-                            "president", "governor", "olympic", "championship", "coach"]
+            # Ensure we have enough sentences to populate, otherwise pad with generic info
+            while len(sentences) < 6:
+                sentences.append(f"Developments regarding {topic.capitalize()} are drawing interest from professionals and analysts across the globe.")
             
-            is_profile = any(k in topic_lower or k in clean_context.lower() for k in bio_keywords)
+            # Map sentences to paragraphs
+            p1 = " ".join(sentences[0:2])
+            p2 = " ".join(sentences[2:4])
+            p3 = " ".join(sentences[4:6])
+            p4 = " ".join(sentences[6:8]) if len(sentences) > 7 else sentences[5]
             
-            if is_profile:
-                # 🌟 Profile Spotlight Template
-                title_text = f"Profile Spotlight: {topic.title()}"
-                summary_text = f"A summary of findings and professional profile for {topic.title()}."
-                tags = [topic.replace(" ", ""), "Spotlight", "Profile", "Biography"]
-                seo_keywords = [topic, f"about {topic}", f"{topic} history", f"{topic} career"]
-                social_caption = f"Exploring the journey and achievements of {topic.title()}. #{topic.replace(' ', '')} #Spotlight"
-                
-                # We can construct key highlights from the first few sentences
-                first_few = " ".join(sentences[:3]) if sentences else clean_context
-                
-                linkedin_text = (
-                    f"🌟 Spotlight: Understanding the Journey and Impact of {topic.title()}\n\n"
-                    f"When examining individuals who make a significant impact in their respective fields, "
-                    f"**{topic.title()}** stands out as a prime example of excellence, commitment, and skill.\n\n"
-                    f"Here is a summary of findings from recent records:\n\n"
-                    f"• **Overview**: {first_few}\n"
-                    f"• **Domain & Role**: Public Figure / Professional Spotlight\n"
-                    f"• **Key Details**: Known for outstanding career contributions and representation at the highest level.\n\n"
-                    f"What is your key takeaway from their career path and achievements?\n\n"
-                    f"#{topic.replace(' ', '')} #ProfileSpotlight #Biography #Achievements #Inspiration"
-                )
-                twitter_text = (
-                    f"Spotlight on {topic.title()}: {clean_context[:140]}... #{topic.replace(' ', '')} #Biography"
-                )
-                instagram_text = (
-                    f"✨ Spotlight: {topic.title()} ✨\n\n"
-                    f"Swipe to read a quick overview of {topic.title()}'s journey, highlights, and milestones.\n\n"
-                    f"💡 Fact Summary: {clean_context[:180]}...\n\n"
-                    f"#{topic.replace(' ', '')} #Biography #Legacy #Inspiration #PublicFigure"
-                )
-                general_text = (
-                    f"# Profile Overview: {topic.title()}\n\n"
-                    f"A detailed summary and key findings regarding **{topic.title()}**.\n\n"
-                    f"## Summary of Findings\n\n"
-                    f"{clean_context}\n\n"
-                    f"## Key Highlights\n\n"
-                    f"* **Domain**: Sports, Entertainment, or Public Service\n"
-                    f"* **Status**: Known for leadership, dedication, and high-performance standards.\n"
-                    f"* **Source**: Compiled search records and public directory summaries."
-                )
-            else:
-                # 💡 General/Informational Topic Template (not forced to business jargon)
-                title_text = f"Exploring {topic.title()}: Latest Findings and Overview"
-                summary_text = f"A summary of recent findings and analytical overview of {topic.title()}."
-                tags = [topic.replace(" ", ""), "Insights", "Overview", "Update"]
-                seo_keywords = [topic, f"{topic} update", f"{topic} overview", f"learn about {topic}"]
-                social_caption = f"Here is a quick digest of what you need to know about {topic.title()} today."
-                
-                first_few = " ".join(sentences[:3]) if sentences else clean_context
-                
-                linkedin_text = (
-                    f"📈 Quick Digest: Key Insights into {topic.title()}\n\n"
-                    f"Staying informed about recent updates regarding **{topic.title()}** is essential for "
-                    f"understanding how developments are shaping discussions across related sectors.\n\n"
-                    f"Here is a summary of the latest findings:\n\n"
-                    f"• **Overview**: {first_few}\n"
-                    f"• **Context**: {clean_context[:200]}...\n"
-                    f"• **Relevance**: Highlighted as a key topic of interest based on recent scans.\n\n"
-                    f"How do these findings align with your current perspective or project models?\n\n"
-                    f"#{topic.replace(' ', '')} #Insights #KnowledgeSharing #Trends #Discussion"
-                )
-                twitter_text = (
-                    f"Quick digest on {topic.title()}: {clean_context[:140]}... #{topic.replace(' ', '')} #Update"
-                )
-                instagram_text = (
-                    f"💡 Fact Sheet: {topic.title()} 💡\n\n"
-                    f"Here's a quick summary of the latest findings and insights on {topic.title()}.\n\n"
-                    f"📌 Summary: {clean_context[:180]}...\n\n"
-                    f"#{topic.replace(' ', '')} #Insights #Trends #Overview #Knowledge"
-                )
-                general_text = (
-                    f"# Exploring {topic.title()}: Latest Findings and Analytical Overview\n\n"
-                    f"Developments regarding **{topic.title()}** have emerged as key factors of interest. "
-                    f"Staying updated on this topic provides valuable context and supports informed decision-making.\n\n"
-                    f"## Summary of Findings\n\n"
-                    f"{clean_context}\n\n"
-                    f"## Key Pillars of Interest\n\n"
-                    f"* **Baseline Facts**: Verified information from search grounding.\n"
-                    f"* **Socio-Economic/Cultural Context**: How this topic intersects with broader public discussion.\n"
-                    f"* **Future Outlook**: Key areas to watch as developments continue."
-                )
+            title_text = f"{topic.title()}: Responding to Pressure & The Evolution of Modern Leadership"
+            summary_text = f"{topic.title()} and the Dynamics of Elite Performance under Pressure"
+            tags = [topic.replace(" ", ""), "Spotlight", "Profile", "Resilience"]
+            seo_keywords = [topic, f"{topic} performance", f"{topic} leadership"]
+            social_caption = f"Exploring the journey and achievements of {topic.title()} under pressure. #{topic.replace(' ', '')}"
+            
+            # Generate the detailed, structured layout exactly like Hardik Pandya's
+            linkedin_text = (
+                f"🏏 {topic.title()}: Responding to Pressure & The Evolution of Modern Leadership\n\n"
+                f"In professional contexts, few profiles illustrate the highs and lows of leadership and public pressure as vividly as {topic.title()}'s journey.\n\n"
+                f"Key leadership and adaptability lessons from {topic.title()}:\n\n"
+                f"1. **Resilience Under Spotlight**: {p1}\n"
+                f"2. **Adaptive Strategies**: {p2}\n"
+                f"3. **Empowering and Delivering Results**: {p3}\n\n"
+                f"Whether facing professional challenges or steering complex situations, the ability to filter out external noise, adapt your role, and deliver under pressure is key.\n\n"
+                f"What is your key takeaway from this career path?\n\n"
+                f"#{topic.replace(' ', '')} #Leadership #Resilience #Performance #Mindset"
+            )
+            twitter_text = (
+                f"{topic.title()}: Responding to Pressure & The Evolution of Modern Leadership. "
+                f"Key insights: {clean_context[:140]}... #{topic.replace(' ', '')} #Leadership"
+            )
+            instagram_text = (
+                f"✨ Spotlight: {topic.title()} ✨\n\n"
+                f"Swipe to read a quick overview of {topic.title()}'s journey and elite performance under pressure.\n\n"
+                f"💡 Fact Summary: {clean_context[:180]}...\n\n"
+                f"#{topic.replace(' ', '')} #Biography #Legacy #Inspiration #PublicFigure"
+            )
+            general_text = (
+                f"# {topic.title()}: Responding to Pressure & The Evolution of Modern Leadership\n\n"
+                f"## {topic.title()} and the Dynamics of Elite Performance under Pressure\n\n"
+                f"{p1}\n\n"
+                f"## Leadership and Tactical Adaptability\n\n"
+                f"{p2}\n\n"
+                f"## Overcoming Adversity and Scrutiny\n\n"
+                f"{p3}\n\n"
+                f"## Strategic Impact and Legacy\n\n"
+                f"{p4}"
+            )
             
         return {
             "title": title_text,
