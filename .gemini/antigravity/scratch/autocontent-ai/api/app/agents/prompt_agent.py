@@ -551,12 +551,21 @@ Do not add explanations.
             sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
             sentences = [s for s in sentences if len(s) > 10]
             
-            # If search context is empty, try knowledge base fallback
+            # If search context is empty, try Wikipedia REST API first
+            if not clean_context or len(sentences) < 2:
+                wiki_summary = self._fetch_wikipedia_summary(topic)
+                if wiki_summary:
+                    clean_context = wiki_summary
+                    sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
+                    sentences = [s for s in sentences if len(s) > 10]
+
+            # If Wikipedia fails, try knowledge base fallback
             if not clean_context or len(sentences) < 2:
                 matching_key = next((k for k in knowledge_base if k in topic.lower()), None)
                 if matching_key:
                     clean_context = knowledge_base[matching_key]
                     sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
+                    sentences = [s for s in sentences if len(s) > 10]
                 else:
                     clean_context = (
                         f"{topic.title()} is a subject of significant interest and study. "
@@ -635,6 +644,38 @@ Do not add explanations.
                 "general": general_text
             }
         }
+
+    def _fetch_wikipedia_summary(self, topic: str) -> str:
+        import urllib.parse
+        import httpx
+        
+        headers = {
+            "User-Agent": "SamhitaApp/1.0 (n210673@rguktn.ac.in)"
+        }
+        
+        try:
+            search_query = urllib.parse.quote(topic)
+            search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={search_query}&format=json&utf8=1"
+            
+            with httpx.Client(headers=headers, timeout=5.0) as client:
+                search_res = client.get(search_url)
+                if search_res.status_code == 200:
+                    search_data = search_res.json()
+                    search_results = search_data.get("query", {}).get("search", [])
+                    if search_results:
+                        best_title = search_results[0]["title"]
+                        summary_title = urllib.parse.quote(best_title)
+                        summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{summary_title}"
+                        summary_res = client.get(summary_url)
+                        if summary_res.status_code == 200:
+                            summary_data = summary_res.json()
+                            extract = summary_data.get("extract", "")
+                            if extract:
+                                return extract
+        except Exception as e:
+            logger.error(f"PromptAgent: Wikipedia fallback failed: {e}")
+            
+        return ""
 
     def _mock_run(self, user_prompt: str, db_context: str = "", search_context: str = "") -> dict:
         prompt_lower = user_prompt.lower()
@@ -874,13 +915,10 @@ Do not add explanations.
         }
 
         # Select template
-        if search_context or (category == "general" and topic != "Trending Topic" and topic.lower() != "general"):
+        if search_context or (topic != "Trending Topic" and topic.lower() != "general"):
             selected = self._expand_mock_content(topic, search_context)
         else:
             selected = templates.get(category, templates["general"])
-            if topic != "Trending Topic" and category == "general":
-                selected = selected.copy()
-                selected["title"] = f"Focus on {topic.capitalize()}: {selected['title']}"
 
         # Get content based on platform
         plat_key = platform if platform in selected["content"] else "general"
