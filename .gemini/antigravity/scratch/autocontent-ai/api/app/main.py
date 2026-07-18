@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.connection import Database
-from app.routes import posts, agents, auth
+from app.routes import posts, agents, auth, linkedin_oauth
 from datetime import datetime
 import logging
 
@@ -36,6 +36,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(posts.router)
 app.include_router(agents.router)
+app.include_router(linkedin_oauth.router)
 
 @app.on_event("startup")
 async def startup_db_client():

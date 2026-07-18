@@ -13,9 +13,9 @@ export default function Sidebar({ user, onLogout, isOpen, setIsOpen }) {
       icon: BookOpen,
     },
     {
-      name: 'Control Panel',
-      path: '/dashboard',
-      icon: LayoutDashboard,
+      name: 'AI Social Assistant',
+      path: '/assistant',
+      icon: Sparkles,
     },
   ];
 

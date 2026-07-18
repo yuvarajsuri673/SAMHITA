@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     RSS_FEEDS: str = "https://techcrunch.com/feed/,https://news.ycombinator.com/rss"
     PORT: int = 8000
 
+    # LinkedIn OAuth
+    LINKEDIN_CLIENT_ID: str = ""
+    LINKEDIN_CLIENT_SECRET: str = ""
+    LINKEDIN_REDIRECT_URI: str = ""
+
     @property
     def rss_feed_list(self) -> list[str]:
         return [url.strip() for url in self.RSS_FEEDS.split(",") if url.strip()]

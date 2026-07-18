@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import PostDetails from './pages/PostDetails';
 import SocialFeed from './pages/SocialFeed';
+import SocialAssistant from './pages/SocialAssistant';
 import Auth from './pages/Auth';
 import { api } from './services/api';
 import { Loader } from 'lucide-react';
@@ -202,6 +203,15 @@ export default function App() {
                     pipelineLogs={pipelineLogs}
                     triggerPipeline={triggerPipeline}
                     refreshTrigger={refreshTrigger}
+                    setRefreshTrigger={setRefreshTrigger}
+                  />
+                } 
+              />
+              <Route 
+                path="/assistant" 
+                element={
+                  <SocialAssistant 
+                    user={user}
                     setRefreshTrigger={setRefreshTrigger}
                   />
                 } 

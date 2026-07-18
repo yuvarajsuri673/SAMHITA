@@ -43,6 +43,18 @@ export const api = {
       const response = await client.get('/auth/me');
       return response.data;
     },
+    getLinkedinLoginUrl: async (token) => {
+      const response = await client.get(`/auth/linkedin/login?token=${token}`);
+      return response.data;
+    },
+    getLinkedinStatus: async () => {
+      const response = await client.get('/auth/linkedin/status');
+      return response.data;
+    },
+    disconnectLinkedin: async () => {
+      const response = await client.post('/auth/linkedin/disconnect');
+      return response.data;
+    },
   },
   // Get all generated posts
   getPosts: async () => {
@@ -89,6 +101,12 @@ export const api = {
   // Trigger Prompt-Based AI Agent workflow
   runPromptPipeline: async (prompt) => {
     const response = await client.post('/agents/prompt', { prompt });
+    return response.data;
+  },
+
+  // Direct publish to LinkedIn
+  publishPostToLinkedin: async (id) => {
+    const response = await client.post(`/posts/${id}/publish/linkedin`);
     return response.data;
   },
 };

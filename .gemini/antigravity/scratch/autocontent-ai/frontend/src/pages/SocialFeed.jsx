@@ -228,12 +228,6 @@ export default function SocialFeed({ refreshTrigger }) {
             <span className="text-[10px] bg-dark-900 border border-dark-850 text-dark-400 font-bold px-3 py-2 rounded-xl select-none">
               📚 {posts.length} Total Articles
             </span>
-            <Link 
-              to="/dashboard" 
-              className="text-[10px] bg-primary-600 hover:bg-primary-500 font-bold text-white px-3.5 py-2 rounded-xl shadow-md shadow-primary-600/10 transition-all hover:shadow-primary-600/30 flex items-center gap-1"
-            >
-              Control Panel &rarr;
-            </Link>
           </div>
         </div>
 
@@ -278,10 +272,10 @@ export default function SocialFeed({ refreshTrigger }) {
               : 'Your article collection is currently empty. Run the content pipeline from the control panel to generate your first posts!'}
           </p>
           <Link
-            to="/dashboard"
+            to="/assistant"
             className="inline-flex items-center gap-1.5 bg-dark-850 hover:bg-dark-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-dark-700 transition-colors"
           >
-            Open Control Panel
+            Open Social Assistant
           </Link>
         </div>
       ) : (
