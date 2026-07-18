@@ -515,54 +515,47 @@ Do not add explanations.
             # Simple sentence splitting and cleaning
             sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_context) if s.strip()]
             
-            # Ensure we have enough sentences to populate, otherwise pad with generic info
-            while len(sentences) < 6:
-                sentences.append(f"Developments regarding {topic.capitalize()} are drawing interest from professionals and analysts across the globe.")
+            # Ensure we have enough sentences
+            while len(sentences) < 4:
+                sentences.append(f"Additional records indicate {topic.title()} continues to draw interest within public directories.")
             
-            # Map sentences to paragraphs
-            p1 = " ".join(sentences[0:2])
-            p2 = " ".join(sentences[2:4])
-            p3 = " ".join(sentences[4:6])
-            p4 = " ".join(sentences[6:8]) if len(sentences) > 7 else sentences[5]
+            p_intro = sentences[0]
+            p_role = sentences[1]
+            p_achieve = " ".join(sentences[2:4])
+            p_adapt = " ".join(sentences[4:6]) if len(sentences) > 5 else sentences[3]
             
-            title_text = f"{topic.title()}: Responding to Pressure & The Evolution of Modern Leadership"
-            summary_text = f"{topic.title()} and the Dynamics of Elite Performance under Pressure"
-            tags = [topic.replace(" ", ""), "Spotlight", "Profile", "Resilience"]
-            seo_keywords = [topic, f"{topic} performance", f"{topic} leadership"]
-            social_caption = f"Exploring the journey and achievements of {topic.title()} under pressure. #{topic.replace(' ', '')}"
+            title_text = f"Quick Digest: {topic.title()}"
+            summary_text = f"A concise fact sheet and key milestones for {topic.title()}."
+            tags = [topic.replace(" ", ""), "Digest", "FactSheet", "Summary"]
+            seo_keywords = [topic, f"{topic} facts", f"{topic} summary"]
+            social_caption = f"Quick digest and key facts about {topic.title()}. #{topic.replace(' ', '')}"
             
-            # Generate the detailed, structured layout exactly like Hardik Pandya's
             linkedin_text = (
-                f"🏏 {topic.title()}: Responding to Pressure & The Evolution of Modern Leadership\n\n"
-                f"In professional contexts, few profiles illustrate the highs and lows of leadership and public pressure as vividly as {topic.title()}'s journey.\n\n"
-                f"Key leadership and adaptability lessons from {topic.title()}:\n\n"
-                f"1. **Resilience Under Spotlight**: {p1}\n"
-                f"2. **Adaptive Strategies**: {p2}\n"
-                f"3. **Empowering and Delivering Results**: {p3}\n\n"
-                f"Whether facing professional challenges or steering complex situations, the ability to filter out external noise, adapt your role, and deliver under pressure is key.\n\n"
-                f"What is your key takeaway from this career path?\n\n"
-                f"#{topic.replace(' ', '')} #Leadership #Resilience #Performance #Mindset"
+                f"📊 Quick Digest: {topic.title()}\n\n"
+                f"{p_intro}\n\n"
+                f"• **Core Profile**: {p_role}\n"
+                f"• **Key Highlights**: {p_achieve}\n"
+                f"• **Adaptability & Impact**: {p_adapt}\n\n"
+                f"#{topic.replace(' ', '')} #Digest #KeyFacts #Overview"
             )
             twitter_text = (
-                f"{topic.title()}: Responding to Pressure & The Evolution of Modern Leadership. "
-                f"Key insights: {clean_context[:140]}... #{topic.replace(' ', '')} #Leadership"
+                f"📊 Digest: {topic.title()}\n\n"
+                f"{p_intro[:120]}...\n\n"
+                f"#{topic.replace(' ', '')} #KeyFacts"
             )
             instagram_text = (
-                f"✨ Spotlight: {topic.title()} ✨\n\n"
-                f"Swipe to read a quick overview of {topic.title()}'s journey and elite performance under pressure.\n\n"
-                f"💡 Fact Summary: {clean_context[:180]}...\n\n"
-                f"#{topic.replace(' ', '')} #Biography #Legacy #Inspiration #PublicFigure"
+                f"📊 Quick Digest: {topic.title()} 📊\n\n"
+                f"• Profile: {p_role[:100]}...\n"
+                f"• Highlights: {p_achieve[:100]}...\n\n"
+                f"#{topic.replace(' ', '')} #Digest #Facts"
             )
             general_text = (
-                f"# {topic.title()}: Responding to Pressure & The Evolution of Modern Leadership\n\n"
-                f"## {topic.title()} and the Dynamics of Elite Performance under Pressure\n\n"
-                f"{p1}\n\n"
-                f"## Leadership and Tactical Adaptability\n\n"
-                f"{p2}\n\n"
-                f"## Overcoming Adversity and Scrutiny\n\n"
-                f"{p3}\n\n"
-                f"## Strategic Impact and Legacy\n\n"
-                f"{p4}"
+                f"# Quick Digest: {topic.title()}\n\n"
+                f"### Key highlights, milestones, and quick facts\n\n"
+                f"{p_intro}\n\n"
+                f"* **Core Profile**: {p_role}\n"
+                f"* **Key Highlights**: {p_achieve}\n"
+                f"* **Adaptability & Impact**: {p_adapt}"
             )
             
         return {
