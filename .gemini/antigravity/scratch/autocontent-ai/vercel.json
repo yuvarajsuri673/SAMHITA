@@ -3,15 +3,15 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:path*",
       "destination": "/api/index.py"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "source": "/assets/:path*",
+      "destination": "/assets/:path*"
     },
     {
-      "source": "/((?!api|assets|favicon.svg|icons.svg).*)" ,
+      "source": "/((?!api|assets|favicon.svg|icons.svg).*)",
       "destination": "/index.html"
     }
   ]
